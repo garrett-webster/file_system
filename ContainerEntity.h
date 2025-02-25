@@ -2,6 +2,7 @@
 #include <vector>
 
 #include "FileEntity.h"
+#include "FileSystem.h"
 
 class ContainerEntity: public FileEntity {
 public:
@@ -10,5 +11,9 @@ public:
     virtual void addChild(FileEntity* child);
     void deleteSelf() override;
 
-    FileEntity* searchChildren(string path);
+    ContainerEntity* searchChildren(string path);
+
+    Drive createFile(FileType type, string fileName);
+
+    // void deleteFile(string path);
 };

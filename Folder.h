@@ -2,8 +2,8 @@
 #include "Drive.h"
 
 class Folder:public Drive {
-    FileEntity *parent;
+    ContainerEntity *parent;
 
 public:
-    Folder(string name, Drive *parent);
+    Folder(string name, ContainerEntity *parent);
 };

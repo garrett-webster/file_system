@@ -1,6 +1,11 @@
 #include "ContainerEntity.h"
 
+#include <stdexcept>
 #include <utility>
+
+#include "FileSystem.h"
+#include "Folder.h"
+class Drive;
 
 ContainerEntity::ContainerEntity(string name) : FileEntity(std::move(name)){}
 
@@ -20,16 +25,15 @@ void ContainerEntity::deleteSelf() {
     children.clear();
 }
 
-FileEntity* ContainerEntity::searchChildren(string path) {
+ContainerEntity* ContainerEntity::searchChildren(string path) {
     for (auto& child : children) {
-        if (child->getPath() == path) {
-            return child;
-        }
-
         // Check if the child is a ContainerEntity
-        ContainerEntity* containerChild = dynamic_cast<ContainerEntity*>(child);
+        auto* containerChild = dynamic_cast<ContainerEntity*>(child);
         if (containerChild) {
-            FileEntity* found = containerChild->searchChildren(path);
+            if (child->getPath() == path) {
+                return containerChild;
+            }
+            auto* found = containerChild->searchChildren(path);
             if (found) return found;  // Return if found in the recursive call
         }
     }

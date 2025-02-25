@@ -13,7 +13,7 @@ protected:
     size_t calculateSize();
 
 public:
-    void deleteSelf() override;
+    // void deleteSelf() override;
     Drive(const string &name);
     bool hasChildWithName(string name);
     void setPath(string &path);

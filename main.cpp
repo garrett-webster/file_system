@@ -4,35 +4,16 @@
 #include "Folder.h"
 #include "TextFile.h"
 #include "ZipFile.h"
+#include "FileSystem.h"
 
 using namespace std;
 
-enum FileType {DRIVE, FOLDER, ZIPFILE, TEXTFILE };
-
-auto createFile(FileType type, string fileName, string parentPath) {
-    switch (type) {
-        case DRIVE:
-            throw runtime_error("Drives cannot have parents");
-        case FOLDER:
-            return Folder(fileName, parentPath);
-    }
-}
-
-Drive createFile(FileType type, string fileName) {
-    if (type != DRIVE) {
-        throw runtime_error("File type not supported");
-    } else {
-        return {fileName};
-    }
-}
-
-
-
 int main() {
-    vector<Drive> drives;
+    vector<Drive*> drives;
 
 
     auto drive = Drive("Drive");
+    drives.push_back(&drive);
     auto zip_file = ZipFile("zip_file", &drive);
     auto folder = Folder("folder", &zip_file);
     auto text_file = TextFile("text_file", "This is content of size 26", &folder);
@@ -42,5 +23,6 @@ int main() {
     // zip_file.setPath(file_name);
 
     // drive->deleteSelf();
+    FileEntity *file_entity = FileSystem::findParent("/Drive/zip_file", drives);
     cout << "for debugging!" << endl;
 }
