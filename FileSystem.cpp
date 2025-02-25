@@ -1,85 +1,91 @@
+#include <stdexcept>
+
 #include "FileSystem.h"
 
-#include <stdexcept>
-#include <utility>
+#include <iostream>
+#include <ostream>
 
 #include "Folder.h"
 #include "TextFile.h"
+#include "ZipFile.h"
 
-ContainerEntity* FileSystem::findParent(string path, vector<Drive*> &drives) {
+vector<ContainerEntity*> FileSystem::drives;
 
-    for (auto drive : drives) {
-        ContainerEntity *result = drive->searchChildren(path);
-        if (drive->getPath() == path) {
-            return drive;
+FileEntity* FileSystem::findFileHelper(const std::string& path, vector<FileEntity*>& children) {
+    for (const auto child : children) {
+        if (child->getPath() == path) {
+            return child;
         }
-        if (result != nullptr) {
-            return result;
+
+        auto* result = dynamic_cast<ContainerEntity*>(child);
+        // If the child is a ContainerEntity, recursively search its children
+        if (result) {
+            return findFileHelper(path, result->children);  // Pass child’s children
         }
     }
     return nullptr;
 }
 
-// FileEntity* FileSystem::findFile(const std::string& path, vector<Drive*> &drives) {
-//     for (auto drive : drives) {
-//
-//         ContainerEntity *result = dynamic_cast<ContainerEntity*>(drive);
-//         if (result != nullptr) {
-//         }
-//         // ContainerEntity *result = drive->searchChildren(path);
-//         if (drive->getPath() == path) {
-//             return drive;
-//         }
-//
-//
-//
-//
-//         if (result != nullptr) {
-//             return result;
-//         }
-//     }
-//     return nullptr;
-// }
+FileEntity* FileSystem::findFile(const std::string& path, vector<ContainerEntity*>& children) {
+    for (const auto drive : drives) {
+        if (drive->getPath() == path) {
+            return drive;
+        }
 
-auto FileSystem::createFile(FileType type, string fileName, vector<Drive*> drives, string parentPath) {
-    switch (type) {
+        return findFileHelper(path, drive->children);  // Pass child’s children
+    }
+    return nullptr;
+}
+
+FileEntity* FileSystem::createFile(const string& type, const string& fileName, const string& parentPath) {
+    auto parent = dynamic_cast<ContainerEntity*>(findFile(parentPath, drives));
+
+    switch (stringToType(type)) {
         case DRIVE:
             throw runtime_error("Drives cannot have parents.");
         case TEXTFILE:
-            throw runtime_error("Text files need a content string.");
+            if (!parent) {
+                throw runtime_error("Parent is not a container entity.");
+            }
+            return new TextFile(fileName, parent);
         case FOLDER:
-            return Folder(move(fileName), FileSystem::findParent(move(parentPath), drives));
+            if (!parent) {
+                throw runtime_error("Parent is not a container entity.");
+            }
+        return new Folder(fileName, parent);
         case ZIPFILE:
-            return ZIPFILE(move(fileName), FileSystem::findParent(move(parentPath), drives));
+            if (!parent) {
+                throw runtime_error("Parent is not a container entity.");
+            }
+            return new ZipFile(fileName, parent);
     }
+
+    return nullptr;
 }
 
-auto FileSystem::createFile(FileType type, string fileName, vector<Drive*> drives, string parentPath, string content) {
-    switch (type) {
-        case DRIVE:
-            throw runtime_error("Drives cannot have parents.");
-        case TEXTFILE:
-            throw runtime_error("Text files need a content string.");
-        case FOLDER:
-            return Folder(move(fileName), FileSystem::findParent(move(parentPath), drives));
-        case ZIPFILE:
-            return ZIPFILE(move(fileName), FileSystem::findParent(move(parentPath), drives));
-    }
-}
-
-Drive FileSystem::createFile(FileType type, string fileName) {
-    if (type != DRIVE) {
+Drive* FileSystem::createFile(const string& type, const string& fileName) {
+    if (stringToType(type) != DRIVE) {
         throw runtime_error("File type not supported");
     } else {
-        return {fileName};
+        auto* newDrive = new Drive(fileName);
+        drives.push_back(newDrive);
+        return {newDrive};
     }
 }
 
-void FileSystem::deleteFile(string path, vector<Drive*> drives) {
-    FileSystem::findParent(std::move(path), drives)->deleteSelf();
+void FileSystem::deleteFile(const string& path) {
+    auto* file = findFile(path, drives);
+    if (file) {
+        file->deleteSelf();
+    } else {
+        cout << "Error: File not found: " << path << endl;
+    }
 }
 
-void FileSystem::writeToFile(const string& path, const string& content, vector<Drive*> drives) {
-    FileSystem::findFile(std::move(path), drives)->setContent(content);
+void FileSystem::writeToFile(const string& path, const string& content) {
+    auto* textFile = dynamic_cast<TextFile*>(findFile(path, drives));
+    if(textFile) {
+        textFile->setContent(content);
+    }
 }
 

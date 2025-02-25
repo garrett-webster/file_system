@@ -2,9 +2,9 @@
 #include "Drive.h"
 
 class ZipFile: public Drive {
-    Drive *parent;
+    ContainerEntity *parent;
 public:
     void addChild(FileEntity *child);
-    ZipFile(string name, Drive *parent);
+    ZipFile(string name, ContainerEntity *parent);
 };
 

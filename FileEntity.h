@@ -10,6 +10,8 @@ class FileEntity {
     size_t size = 0;
 
     public:
+    virtual ~FileEntity() = default;
+
     virtual void deleteSelf();
     FileEntity(string name, string path);
     FileEntity(string name);
@@ -18,5 +20,5 @@ class FileEntity {
     size_t getSize();
     string getPath();
 
-    void setPath(const string &path);
+    virtual void setPath(const string &path);
 };

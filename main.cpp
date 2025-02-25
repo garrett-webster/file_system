@@ -9,20 +9,15 @@
 using namespace std;
 
 int main() {
-    vector<Drive*> drives;
 
+    FileSystem::createFile("Drive", "Drive");
 
-    auto drive = Drive("Drive");
-    drives.push_back(&drive);
-    auto zip_file = ZipFile("zip_file", &drive);
-    auto folder = Folder("folder", &zip_file);
-    auto text_file = TextFile("text_file", "This is content of size 26", &folder);
-    //
-    // string file_name = "file.txt";
-    //
-    // zip_file.setPath(file_name);
+    auto zip_file = FileSystem::createFile("ZipFile", "zip_file", "/Drive");
+    FileSystem::createFile("Folder", "folder", "/Drive/zip_file");
+    FileSystem::createFile("TextFile", "text_file", "/Drive/zip_file/folder");
+    string file_name = "file.txt";
 
-    // drive->deleteSelf();
-    FileEntity *file_entity = FileSystem::findParent("/Drive/zip_file", drives);
+    zip_file->setPath(file_name);
+    FileEntity *file_entity = FileSystem::findFile("file.txt");
     cout << "for debugging!" << endl;
 }
