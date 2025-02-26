@@ -6,8 +6,9 @@
 class ContainerEntity: public FileEntity {
 public:
     vector<FileEntity*> children;
-    explicit ContainerEntity(string name);
+    ContainerEntity(FileType type, const string& name);
     virtual void addChild(FileEntity* child);
+    virtual void removeChild(FileEntity* child);
     void deleteSelf() override;
     void setPath(const string &path) override;
 

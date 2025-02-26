@@ -4,12 +4,12 @@
 
 class TextFile: public FileEntity {
     string content;
-    FileEntity *parent;
+    ContainerEntity *parent;
 
 public:
-    TextFile(const string &name, ContainerEntity *parent);
+    TextFile(FileType type, const string &name, ContainerEntity *parent);
 
     void setContent(const string &content);
-
     void setPath(const string& parentPath) override;
+    ContainerEntity* getParent();
 };

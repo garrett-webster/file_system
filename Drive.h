@@ -11,6 +11,6 @@ protected:
 
 public:
     // void deleteSelf() override;
-    Drive(const string &name);
+    Drive(FileType type, const string &name);
     bool hasChildWithName(string name);
 };

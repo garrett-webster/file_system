@@ -3,7 +3,7 @@
 #include "ContainerEntity.h"
 
 // Constructor definition
-Drive::Drive(const string& name) : ContainerEntity(name) {}
+Drive::Drive(FileType type, const string& name) : ContainerEntity(type, name) {}
 
 bool Drive::hasChildWithName(string name) {
     for (auto & child : children) {

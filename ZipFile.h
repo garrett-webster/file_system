@@ -4,7 +4,9 @@
 class ZipFile: public Drive {
     ContainerEntity *parent;
 public:
-    void addChild(FileEntity *child);
-    ZipFile(string name, ContainerEntity *parent);
+    void addChild(FileEntity *child) override;
+    void removeChild(FileEntity *child) override;
+    ZipFile(FileType type, string name, ContainerEntity *parent);
+    ContainerEntity* getParent();
 };
 

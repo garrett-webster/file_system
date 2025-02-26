@@ -1,8 +1,8 @@
 #include "FileEntity.h"
 
-FileEntity::FileEntity(const string name, const string path) : name(name), path(path) {};
+FileEntity::FileEntity(FileType type, const string& name, const string& path) : type(type), name(name), path(path) {};
 
-FileEntity::FileEntity(const string name) : name(name) {
+FileEntity::FileEntity(FileType type, const string& name) : type(type), name(name) {
     this->path = "/" + name;
 };
 
@@ -22,6 +22,11 @@ string FileEntity::getPath() {
     return path;
 }
 
-void FileEntity::setPath(const string &path){
-    this->path = path;
+FileType FileEntity::getType() {
+    return type;
 }
+
+void FileEntity::setPath(const string &path){
+    this->path = path + "/" + name;
+}
+
