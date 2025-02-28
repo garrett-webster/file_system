@@ -6,17 +6,20 @@
 ContainerEntity::ContainerEntity(const FileType type, const string& name) : FileEntity(type, name){}
 
 void ContainerEntity::addChild(FileEntity *child) {
+    if (child == this) {
+        throw std::runtime_error("A ContainerEntity cannot be its own child.");
+    }
     children.push_back(child);
-    // children.back()->setPath(this->path + "/" + children.back()->getName());
+    children.back()->setPath(this->path);
     this->size += children.back()->getSize();
 }
 
 void ContainerEntity::removeChild(FileEntity *child) {
-    size -= child->getSize();
+    this->size -= child->getSize();
     children.erase(std::remove(children.begin(), children.end(), child), children.end());
 }
 
-// Recursively deletes all children of the drive as well as itself
+// Recursively deletes all children of the container as well as itself
 void ContainerEntity::deleteSelf() {
     for (auto& child : children) {
         child->deleteSelf();

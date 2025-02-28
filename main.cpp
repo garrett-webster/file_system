@@ -19,6 +19,8 @@ int main() {
     FileSystem::createFile("TextFile", "text_file", "/Drive1");
     FileSystem::createFile("ZipFile", "zipFile", "/Drive1");
 
+    FileSystem::writeToFile("/Drive1/text_file", "123456");
+
     FileSystem::moveFile("/Drive1/zipFile", "/Drive2");
     FileSystem::moveFile("/Drive1/text_file", "/Drive2/zipFile");
 

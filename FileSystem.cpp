@@ -21,7 +21,7 @@ FileEntity* FileSystem::findFileHelper(const std::string& path, vector<FileEntit
         auto* result = dynamic_cast<ContainerEntity*>(child);
         // If the child is a ContainerEntity, recursively search its children
         if (result) {
-            return result;
+            return findFileHelper(path, result->children);
         }
     }
     return nullptr;
@@ -131,7 +131,7 @@ void FileSystem::moveFile(const string& from, const string& to) {
             parent->removeChild(folder);
             // This next line is causing issues. I'm not sure why.
             newParent->addChild(folder);
-            folder->setPath(to);
+            // folder->setPath(to);
             break;
         }
         case ZIPFILE: {
@@ -140,8 +140,9 @@ void FileSystem::moveFile(const string& from, const string& to) {
 
             parent->removeChild(zipFile);
             // This next line is causing issues. I'm not sure why.
+
+            // zipFile->setPath(to);
             newParent->addChild(zipFile);
-            zipFile->setPath(to);
             break;
         }
         default:
